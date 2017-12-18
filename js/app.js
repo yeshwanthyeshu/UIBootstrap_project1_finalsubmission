@@ -99,11 +99,11 @@ data: {
    * add the onclick event handeler to each tab
    */
   $scope.appendtab = function () {
-
+  $scope.mychartname = document.getElementById("chartname").value;    
   var tohere = angular.element( document.querySelector( '#tabs' ) );
   this.newele.push(this.selectedchart);
   $scope.my = this.i;
-  var ele = angular.element("<button class='tab'"+"id="+this.my+"> clickme</button>"); 
+  var ele = angular.element("<button class='tab'"+"id="+this.my+">"+this.mychartname+" </button>"); 
   $scope.newalert = function() {
     alert("I am done");
   } 
