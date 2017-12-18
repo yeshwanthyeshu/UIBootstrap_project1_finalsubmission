@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <script src="js/angular.js"></script>
+    <script src="js/angular-ui-bootstrap-modal.js"></script>
+    <script src="js/app.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link href="./c3/c3.css" rel="stylesheet">
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script src="./c3/c3.min.js"></script>
+	
+	
+	<!--The below link is for style and bootstrap-->
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	
+  </head>
+  <body ng-app="MyApp" ng-controller="MyCtrl">
+
+    <button class="btn btn-primary center-block" ng-click="open()">Open Widget</button>
+	<div id="tabs">
+		Space for tabs
+		<button class="btn btn-primary pull-right" ng-click="showthecharts()">save the charts</button>
+	</div>
+	
+    <div modal="showModal" close="cancel()">
+      
+	  <div class="modal-content">
+    <span class="close" ng-click="cancel()">&times;</span>
+	<form id="myform" name="myform" ngmodel="myform" class="form-horizontal" novalidate >
+		<div class="modal-header">
+			<h3>Widget Settings</h3>
+		</div>
+		<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-6 col-md-6">
+						<div class="form-group">
+							<label class="control-label col-lg-4 col-md-4">Name</label>
+							<div class="col-lg-8 col-md-8">
+								<input name="myname" ng-model="myname" class="form-control myinput" required/>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 col-md-6">
+						<div class="form-group">
+							<label class="control-label col-lg-4 col-md-4">Type</label>
+							<div class="col-lg-8 col-md-8">
+								<select id="selectcharttype" name="type" ng-model="selectedchart" ng-options="x for x in options" class="form-control myinput">
+									
+
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-6 col-md-6">
+						<div class="form-group">
+							<label class="control-label col-lg-4 col-md-4">Width</label>
+							<div class="col-lg-8 col-md-8">
+								<input name="sizeX" id="mywidth" type="number" ng-model="mywidth" class="form-control"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 col-md-6">
+						<div class="form-group">
+							<label class="control-label col-lg-4 col-md-4">Height</label>
+							<div class="col-lg-8 col-md-8">
+								<input name="sizeY" id="myheight" type="number" ng-model="myheight" class="form-control ">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-6 col-md-6">
+						<div class="form-group">
+							<label class="control-label col-lg-4 col-md-4">Add to data</label>
+							<div class="col-lg-8 col-md-8">
+								<input id="addto" type="number" name="col" ng-model="addtodata" class="form-control myinput ">
+								<button ng-click="addto()">add</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		
+		
+		
+		
+		<div class="modal-footer">
+			<a class="btn btn-danger pull-left" ng-click="cancel()" style="margin-top: 10px;" ><i class="glyphicon glyphicon-trash"></i> Delete</a>
+			<a class="btn btn-default" ng-click="clear()" tabindex="-1"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+			<button id="modalsave" type="submit" ng-click="mysubmit()" class="btn btn-primary btn-lg"><i class="glyphicon glyphicon-ok"></i> Save</button>
+		</div>
+
+	</form>
+		
+
+
+  </div>
+</div>
+<div id="chart" style="height:{{myheight}};width:{{mywidth}};"></div>
+<div id="showsaved"></div>
+
+  </body>
+</html>
