@@ -32,6 +32,11 @@ app.controller("MyCtrl", function($scope) {
 $scope.generatechartfromtab = function (val) {
  $scope.mytabdata = this.savedcharts[val-1];
   console.log(this.mytabdata);
+  /**
+   * the data for generating the charts are available with
+   * mytabdata[4]
+   * mytabdata[5]
+   */
   $scope.tabchartname = this.mytabdata[0];
   $scope.tabcharttype = this.mytabdata[1];
   this.myheight = this.mytabdata[2];
@@ -41,7 +46,23 @@ $scope.generatechartfromtab = function (val) {
  * generating the charts form tab data
  * 
  */
-
+if(this.tabcharttype =='donut'){
+  this.donutchart(this.mytabdata[4],this.mytabdata[5]);
+}
+if(this.tabcharttype == 'area'){
+  var chart = c3.generate({
+    data: {
+        columns: [
+          this.mytabdata[4],
+          this.mytabdata[5]
+        ],
+        types: {
+            data1: 'area-spline',
+            data2: 'area-spline'
+        }
+    }
+});
+};
 if(this.tabcharttype == "line"){
   $scope.chart = c3.generate({
     bindto: '#chart',
@@ -99,23 +120,23 @@ data: {
    * add the onclick event handeler to each tab
    */
   $scope.appendtab = function () {
-  $scope.mychartname = document.getElementById("chartname").value;    
-  var tohere = angular.element( document.querySelector( '#tabs' ) );
-  this.newele.push(this.selectedchart);
-  $scope.my = this.i;
-  var ele = angular.element("<button class='tab'"+"id="+this.my+">"+this.mychartname+" </button>"); 
-  $scope.newalert = function() {
-    alert("I am done");
-  } 
-  tohere.append(ele); 
-  document.getElementById(this.my).addEventListener("click", function(event){ 
-    angular.element(document.body).scope().generatechartfromtab(event.toElement.id);
-    console.log(event.toElement.id);
-  });
-  /**
-   * Incrementing i after every tab generation
-   */
-  this.i = this.i +1;
+    $scope.mychartname = document.getElementById("chartname").value;    
+    var tohere = angular.element( document.querySelector( '#tabs' ) );
+    this.newele.push(this.selectedchart);
+    $scope.my = this.i;
+    var ele = angular.element("<button class='tab'"+"id="+this.my+">"+this.mychartname+" </button>"); 
+    $scope.newalert = function() {
+      alert("I am done");
+    } 
+    tohere.append(ele); 
+    document.getElementById(this.my).addEventListener("click", function(event){ 
+      angular.element(document.body).scope().generatechartfromtab(event.toElement.id);
+      console.log(event.toElement.id);
+    });
+    /**
+     * Incrementing i after every tab generation
+     */
+    this.i = this.i +1;
   };
 
 /**
@@ -152,7 +173,7 @@ data: {
   * option: array
   * the list of names of the charts
   */
-  $scope.options = ['line','bar','pie'];
+  $scope.options = ['line','bar','pie','area','donut'];
   /**
    * data1, data2 : array
    * two datas for chart generation
@@ -191,7 +212,7 @@ data: {
   }
   /**
    *showthecharts : function
-   * this function shows the upto now saved charts 
+   * this function shows the upto now saved charts in the div showsaved
    */
 $scope.showthecharts = function() {
   console.log(this.savedcharts);
@@ -203,7 +224,12 @@ $scope.showthecharts = function() {
    * this function generates the chart
    */
   $scope.generatechart = function() {
-
+    if(this.selectedchart =='donut'){
+      this.donutchart(this.data1,this.data2);
+    }
+    if(this.selectedchart =='area'){
+      this.areachart(this.data1,this.data2);
+    };
     if(this.selectedchart == "line"){
       $scope.chart = c3.generate({
         bindto: '#chart',
@@ -215,7 +241,6 @@ $scope.showthecharts = function() {
         }
     });
     }if(this.selectedchart == "bar"){
-
     var chart = c3.generate({
     data: {
       columns: [
@@ -233,22 +258,22 @@ $scope.showthecharts = function() {
     }
     });
     }
-    if(this.selectedchart == "pie"){
-    $scope.piedata = [];
-    for(var i =0;i<this.data1.length-1;i++){
-    this.piedata.push(["data"+i,this.data1[i+1]]);
-    }
-    console.log(this.piedata);
-    var chart = c3.generate({
-    data: {
-        // iris data from R
-        columns: this.piedata,
-        type : 'pie',
-        onclick: function (d, i) { console.log("onclick", d, i); },
-        onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-        onmouseout: function (d, i) { console.log("onmouseout", d, i); }
-    }
-    });
+  if(this.selectedchart == "pie"){
+      $scope.piedata = [];
+      for(var i =0;i<this.data1.length-1;i++){
+      this.piedata.push(["data"+i,this.data1[i+1]]);
+      }
+      console.log(this.piedata);
+      var chart = c3.generate({
+      data: {
+          // iris data from R
+          columns: this.piedata,
+          type : 'pie',
+          onclick: function (d, i) { console.log("onclick", d, i); },
+          onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+          onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      }
+      });
 
     } 
 
@@ -261,16 +286,51 @@ $scope.showthecharts = function() {
   $scope.mysubmit = function () {
     this.appendtab();
     this.generatechart();
-   this.savingcharts();
-
-  
-  if(this.myname != '' && this.selectedchart !='none'){
-    console.log("not emppty");
-    this.cancel();
-    this.clear();
-  }else{
-    console.log("empty");
-  }
+    this.savingcharts();
+    if(this.myname != '' && this.selectedchart !='none'){
+      console.log("not emppty");
+      this.cancel();
+      this.clear();
+    }else{
+      console.log("empty");
+    }
   };
+
+  /**
+   * This is independent function to generate area chart
+   */
+  $scope.areachart = function(data1,data) {
+    var chart = c3.generate({
+      data: {
+          columns: [
+              data1,
+              data,
+          ],
+          types: {
+              data1: 'area-spline',
+              data2: 'area-spline'
+          }
+      }
+  });
+
+  }
+  $scope.donutchart = function(data1,data2){
+    console.log(data1);
+    var chart = c3.generate({
+      data: {
+          columns: [
+              data1,
+             data2
+          ],
+          type : 'donut',
+          onclick: function (d, i) { console.log("onclick", d, i); },
+          onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+          onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+      },
+      donut: {
+          title: "Iris Petal Width"
+      }
+  });
+  }
 
 });
