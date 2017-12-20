@@ -5955,10 +5955,5 @@ a.badge:hover {
   background-color: #ebebe3;
 }
 .tab{
-  display: inline-block;
-  color: #ffffff;
-  background-color: #814250;
-  width:100px;
-  margin: 5px;
-  box-shadow: 1px 5px 5px grey;
+ 
 }

@@ -6,6 +6,23 @@ app.controller("MyCtrl", function($scope) {
   $scope.open = function() {
     $scope.showModal = true;
   };
+  $scope.savebutton ="none";
+  $scope.changesavebutton = function() {
+    this.savebutton = "block";
+  }
+ /**
+  * declaring the myheight and mywidth
+  */
+  $scope.myheight = 500;
+  $scope.mywidth = 500
+  $scope.assignheightwidth = function() {
+    if(document.getElementById("mywidth").value == null ){
+      this.mywidth = 1000;
+    }
+    if(document.getElementById("myheight").value == null ){
+      this.height = 1000;
+    }
+  }
   /**
    * showchart : function name
    * this is for debugging purpose 
@@ -25,23 +42,28 @@ app.controller("MyCtrl", function($scope) {
    * this is to store the generated charts
    */
   $scope.newele= [];
+  
   /**
  * generatechartfromtab : function
  * this function generates the chart from the selected tab
  */
 $scope.generatechartfromtab = function (val) {
- $scope.mytabdata = this.savedcharts[val-1];
-  console.log(this.mytabdata);
+
+ $scope.mytabdata = this.savedcharts[val-1].slice(0);
+ // console.log(this.mytabdata);
   /**
    * the data for generating the charts are available with
    * mytabdata[4]
    * mytabdata[5]
    */
+
   $scope.tabchartname = this.mytabdata[0];
   $scope.tabcharttype = this.mytabdata[1];
+  $scope.mydiv = document.getElementById("chart");
+  console.log(this.mydiv.style.cssText);
   this.myheight = this.mytabdata[2];
   this.mywidth = this.mytabdata[3];
-  
+  console.log("height is: "+this.myheight);
 /**
  * generating the charts form tab data
  * 
@@ -51,6 +73,7 @@ if(this.tabcharttype =='donut'){
 }
 if(this.tabcharttype == 'area'){
   var chart = c3.generate({
+    bindto: '#chart',
     data: {
         columns: [
           this.mytabdata[4],
@@ -76,6 +99,7 @@ if(this.tabcharttype == "line"){
 }if(this.tabcharttype == "bar"){
 
 var chart = c3.generate({
+  bindto: '#chart',
 data: {
   columns: [
     this.mytabdata[4],
@@ -99,6 +123,7 @@ this.piedata.push(["data"+i,this.mytabdata[4][i+1]]);
 }
 console.log(this.piedata);
 var chart = c3.generate({
+  bindto: '#chart',
 data: {
     // iris data from R
     columns: this.piedata,
@@ -156,6 +181,8 @@ data: {
    */
   $scope.clear = function () {
     document.getElementById("myform").reset();
+    this.selectedchart = "none";
+    //document.getElementById("selectcharttype") = "none";
   }
   /**
    * initializing myname variable to empty
@@ -204,8 +231,10 @@ data: {
   $scope.savingcharts = function() {
     $scope.charttype = this.selectedchart;
     $scope.chartname = this.myname;
-    $scope.chartheight = this.myheight;
-    $scope.chartwidth = this.mywidth;
+    $scope.myarr = [this.myheight,this.mywidth];
+
+    $scope.chartheight = parseInt(this.myarr.slice(0)[0]);
+    $scope.chartwidth = parseInt(this.myarr.slice(0)[1]);
     $scope.chartdata1 = this.data1;
     $scope.chartdata2 = this.data2;
     this.savedcharts.push([this.chartname,this.charttype,this.chartheight,this.chartwidth,this.chartdata1.slice(0),this.chartdata2.slice(0)]);
@@ -241,11 +270,65 @@ $scope.showthecharts = function() {
         }
     });
     }if(this.selectedchart == "bar"){
-    var chart = c3.generate({
+    this.barchart(this.data1,this.data2);
+    }
+  if(this.selectedchart == "pie"){
+    this.piechart(this.data1,this.data2);
+    } 
+
+  }
+  /**
+   * mysubmit : function
+   * generates the chart
+   * appends the generated tab
+   */
+  $scope.mysubmit = function () {
+
+    if(this.myname != '' && this.selectedchart !='none'){
+      //console.log("not emppty");
+      this.appendtab();
+      this.generatechart();
+      
+      this.changesavebutton();
+      this.assignheightwidth();
+      this.savingcharts();
+      this.cancel();
+      this.clear();
+    }else{
+      console.log("empty");
+    }
+  };
+
+  /**
+   * This is independent function to generate area chart
+   * params: data1
+   * params: data
+   */
+  /**
+   * linechart
+   */
+  $scope.linechart = function(data1,data2) {
+    $scope.chart = c3.generate({
+      bindto: '#chart',
+      data: {
+        columns: [
+          data1,
+          data2
+        ]
+      }
+  });
+  }
+  /**
+   * barchart
+   */
+$scope.barchart = function(data1,data2){
+  
+  var chart = c3.generate({
+    bindto: '#chart',
     data: {
       columns: [
-        this.data1,
-        this.data2
+        data1,
+        data2
       ],
       type: 'bar'
     },
@@ -257,54 +340,41 @@ $scope.showthecharts = function() {
       //width: 100 // this makes bar width 100px
     }
     });
-    }
-  if(this.selectedchart == "pie"){
-      $scope.piedata = [];
-      for(var i =0;i<this.data1.length-1;i++){
-      this.piedata.push(["data"+i,this.data1[i+1]]);
-      }
-      console.log(this.piedata);
-      var chart = c3.generate({
-      data: {
-          // iris data from R
-          columns: this.piedata,
-          type : 'pie',
-          onclick: function (d, i) { console.log("onclick", d, i); },
-          onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-          onmouseout: function (d, i) { console.log("onmouseout", d, i); }
-      }
-      });
 
-    } 
-
+}
+  
+/**
+ * piechart
+ */
+$scope.piechart = function(data1,data2) {
+  $scope.piedata = [];
+  for(var i =0;i<data1.length-1;i++){
+  this.piedata.push(["data"+i,this.data1[i+1]]);
   }
-  /**
-   * mysubmit : function
-   * generates the chart
-   * appends the generated tab
-   */
-  $scope.mysubmit = function () {
-    this.appendtab();
-    this.generatechart();
-    this.savingcharts();
-    if(this.myname != '' && this.selectedchart !='none'){
-      console.log("not emppty");
-      this.cancel();
-      this.clear();
-    }else{
-      console.log("empty");
-    }
-  };
+  console.log(this.piedata);
+  var chart = c3.generate({
+    bindto: '#chart',
+  data: {
+      // iris data from R
+      columns: this.piedata,
+      type : 'pie',
+      onclick: function (d, i) { console.log("onclick", d, i); },
+      onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+      onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+  }
+  });
+}
 
   /**
-   * This is independent function to generate area chart
+   * areachart : function
    */
-  $scope.areachart = function(data1,data) {
+  $scope.areachart = function(data1,data2) {
     var chart = c3.generate({
+      bindto: '#chart',
       data: {
           columns: [
               data1,
-              data,
+              data2,
           ],
           types: {
               data1: 'area-spline',
@@ -314,9 +384,13 @@ $scope.showthecharts = function() {
   });
 
   }
+  /**
+   * donutchart : function
+   */
   $scope.donutchart = function(data1,data2){
-    console.log(data1);
+   // console.log(data1);
     var chart = c3.generate({
+      bindto: '#chart',
       data: {
           columns: [
               data1,
