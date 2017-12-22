@@ -71,8 +71,8 @@ $scope.selectedchart ='none';
   * declaring and initializing  myheight and mywidth
   */
   
-  $scope.myheight;
-  $scope.mywidth;
+  $scope.newheight=500;
+  $scope.newwidth=500;
 
   /**
    * todo: this.myheight is undefined.
@@ -107,6 +107,10 @@ $scope.selectedchart ='none';
   $scope.generatechart = function() {
     this.newheight = document.getElementById("myheight").value;
     this.newwidth = document.getElementById("mywidth").value;
+    $scope.mydiv = document.getElementById("chart");
+    this.mydiv.style.height = this.newheight+"px";
+    this.mydiv.style.width = this.newwidth+"px";
+    this.mydiv.style.maxHeight = this.newheight;
     console.log("from function"+this.newheight);
 //	var newele = angular.element("<div id='chart'"+"height="+$scope.newheight+"px width="+$scope.newwidth+"px ></div>");
 //  var here = angular.element(document.querySelector("#showchart"));
@@ -255,14 +259,13 @@ $scope.showthecharts = function() {
   $scope.mysubmit = function () {
 
     if(this.myname != '' && this.selectedchart !='none'){
-      //console.log("not emppty");
-      //this.assignheightwidth();
       this.appendtab();
-      this.changesavebutton();
       this.savingcharts();
+
       this.generatechart();
       this.cancel();
       this.clear();
+      this.changesavebutton();
     }else{
       alert("fields of name and type cannot be empty");
       console.log("empty");
