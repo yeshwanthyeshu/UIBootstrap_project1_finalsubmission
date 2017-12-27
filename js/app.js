@@ -227,6 +227,7 @@ $scope.addto = function() {
  * saves the generated chart to savedcharts array
  */
   $scope.savingcharts = function() {
+    
     $scope.charttype = this.selectedchart;
     $scope.chartname = this.myname;
     //$scope.myarr = [this.newheight,this.newwidth];
@@ -239,6 +240,7 @@ $scope.addto = function() {
     myservice.mysaved.push([this.chartname,this.charttype,this.chartheight,this.chartwidth,this.chartdata1.slice(0),this.chartdata2.slice(0)]);
     console.log("from service");
     console.log(myservice.mysaved);
+    this.savetolocal(myservice.mysaved);
 
   }
   /**
@@ -371,5 +373,11 @@ $scope.piechart = function(data1,data2) {
       }
     });
   }
-
+  /**
+   * savetolocal : function
+   * this saves the data to the local storage
+   */
+  $scope.savetolocal = function(val) {
+    localStorage.setItem('dashboard', val);
+  }
 });
