@@ -48,7 +48,7 @@ $scope.selectedchart ='none';
  * option: array
  * the list of names of the charts
  */
- $scope.options = ['line','bar','pie','area','donut'];
+ $scope.options = ['line','area','bar','stackedbar','steparea','pie','donut','scatter'];
  /**
   * data1, data2 : array
   * two datas for chart generation
@@ -129,7 +129,15 @@ $scope.selectedchart ='none';
   if(this.selectedchart == "pie"){
     this.piechart(this.data1,this.data2);
     } 
-
+  if(this.selectedchart == "steparea"){
+    this.steparea(this.data1,this.data2);
+  }
+  if(this.selectedchart == "scatter"){
+    this.scatter(this.data1,this.data2);
+  }
+  if(this.selectedchart == "stackedbar"){
+    this.stackedbar(this.data1,this.data2);
+  }
   }
 
 
@@ -203,6 +211,15 @@ $scope.generatechartfromtab = function (val) {
   }
   if(this.tabcharttype == "pie"){
   this.piechart(this.mytabdata[4],this.mytabdata[5]);  
+  }
+  if(this.tabcharttype == "steparea"){
+    this.steparea(this.mytabdata[4],this.mytabdata[5]);
+  } 
+  if(this.tabcharttype == "scatter"){
+    this.scatter(this.mytabdata[4],this.mytabdata[5]);
+  } 
+  if(this.tabcharttype == "stackedbar"){
+    this.stackedbar(this.mytabdata[4],this.mytabdata[5]);
   } 
 }
 /**
@@ -288,7 +305,13 @@ $scope.showthecharts = function() {
           data1,
           data2
         ]
-      }
+      },
+      zoom: {
+        enabled: true
+    },
+    legend: {
+      position: 'right'
+  }
     });
   }
 /**
@@ -310,10 +333,102 @@ $scope.barchart = function(data1,data2){
       }
       // or
       //width: 100 // this makes bar width 100px
-    }
+    },
+    zoom: {
+      enabled: true
+  },
+  legend: {
+    position: 'right'
+}
     });
 
 } 
+/**
+ * stacked-bar
+ */
+$scope.stackedbar= function(data1,data2){
+  var chart = c3.generate({
+    data: {
+        columns: [
+            data1,
+           data2,
+            
+        ],
+        type: 'bar',
+        groups: [
+            ['data1', 'data2']
+        ]
+    },
+    grid: {
+        y: {
+            lines: [{value:0}]
+        }
+    },
+    zoom: {
+      enabled: true
+  },
+  legend: {
+    position: 'right'
+}
+});
+
+}
+/**
+ * scatter chart
+ */
+$scope.scatter = function(val1,val2){
+  $scope.data1 = val1 ;
+  $scope.data2= val2 ;
+  $scope.data11 = val1;
+  $scope.data22 = val2;
+
+  $scope.data1[0] = "setosa_x";
+  $scope.data11[0] ="setosa";
+  $scope.data2[0] ="versicolor_x";
+  $scope.data22[0]="versicolor";
+  var chart = c3.generate({
+    data: {
+       
+        // iris data from R
+        columns: [
+          $scope.data1,
+          $scope.data2,
+          $scope.data11,
+          $scope.data22
+          ],
+        type: 'scatter'
+    },zoom: {
+      enabled: true
+  },
+  legend: {
+    position: 'right'
+}
+  
+  });
+}
+/**
+ * steparea
+ */
+ $scope.steparea = function(data1,data2){
+  var chart = c3.generate({
+    data: {
+        columns: [
+           data1,
+           data2
+        ],
+        types: {
+            data1: 'area-step',
+            data2: 'area-step'
+        }
+    },
+    legend: {
+      position: 'right'
+  },
+  zoom: {
+    enabled : true
+  }
+  });
+ }
 /**
  * piechart
  */
@@ -331,7 +446,13 @@ $scope.piechart = function(data1,data2) {
       onclick: function (d, i) { console.log("onclick", d, i); },
       onmouseover: function (d, i) { console.log("onmouseover", d, i); },
       onmouseout: function (d, i) { console.log("onmouseout", d, i); }
-  }
+  },
+  zoom: {
+    enabled: true
+},
+legend: {
+  position: 'right'
+}
   });
 }
   /**
@@ -348,7 +469,13 @@ $scope.piechart = function(data1,data2) {
               data1: 'area-spline',
               data2: 'area-spline'
           }
-      }
+      },
+      zoom: {
+        enabled: true
+    },
+    legend: {
+      position: 'right'
+  }
     });
 
   }
@@ -370,7 +497,13 @@ $scope.piechart = function(data1,data2) {
       },
       donut: {
           title: "Iris Petal Width"
-      }
+      },
+      zoom: {
+        enabled: true
+    },
+    legend: {
+      position: 'right'
+  }
     });
   }
   /**
